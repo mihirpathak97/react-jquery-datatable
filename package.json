@@ -1,5 +1,5 @@
 {
-  "name": "react-jquery-datatable",
+  "name": "react-table",
   "version": "0.1.0",
   "description": "React wrapper for JQuery data tables",
   "author": "Mihir Pathak <mihirpathak97@users.noreply.github.com>",
@@ -42,6 +42,7 @@
     "rollup-plugin-postcss": "^2.0.3",
     "rollup-plugin-typescript": "^1.0.1",
     "rollup-plugin-url": "^2.2.2",
+    "styled-components": "^4.3.2",
     "typescript": "^3.5.3"
   },
   "files": [
