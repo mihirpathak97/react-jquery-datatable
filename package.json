@@ -1,0 +1,9 @@
+{
+  "name": "react-jquery-datatable",
+  "version": "0.1.0",
+  "description": "React wrapper for JQuery datatable",
+  "main": "index.js",
+  "repository": "https://github.com/mihirpathak97/react-jquery-datatable.git",
+  "author": "Mihir Pathak <mihirpathak97@users.noreply.github.com>",
+  "license": "MIT"
+}
