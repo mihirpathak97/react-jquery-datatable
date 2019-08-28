@@ -25,7 +25,11 @@ export default {
       sourcemap: true
     }
   ],
-  external: ['styled-components'],
+  external: [
+    'react',
+    'react-dom',
+    'styled-components'
+  ],
   plugins: [
     peerDepsExternal(),
     postcss({
