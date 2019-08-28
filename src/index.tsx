@@ -13,15 +13,16 @@ interface Props {
 }
 
 interface Column {
-  title: String,
-  key: String
+  title: string,
+  key: string,
+  visible: any
 }
 
 interface Filter {
-  title: String,
+  title: string,
   data: Array<any>,
-  type: String,
-  key: String
+  type: string,
+  key: string
 }
 
 class ReactTable extends React.Component<Props> {
@@ -40,7 +41,7 @@ class ReactTable extends React.Component<Props> {
     })
   }
 
-  handleFilterChange = (data: String | Boolean, key: String, type: String) => {
+  handleFilterChange = (data: string | boolean, key: string, type: string) => {
     this.setState({
       data: this.props.data.filter((item: Object) => {
         
@@ -49,18 +50,18 @@ class ReactTable extends React.Component<Props> {
             // 
           }
           else {
-            item[key.toString()] === '1' || item[key.toString()] === 'true' 
-            ? item[key.toString()] = true : item[key.toString()] = false
+            item[key] === '1' || item[key] === 'true' 
+            ? item[key] = true : item[key] = false
           }
         }
 
         switch (type) {
           case 'select':
-            return item[key.toString()] === data.toString()
+            return item[key] === data
           case 'input':
-              return item[key.toString()].toLowerCase().includes(data.toString().toLowerCase())
+              return item[key].toLowerCase().includes(data.toString().toLowerCase())
           case 'toggle':
-              return Boolean(item[key.toString()]) === Boolean(data)
+              return Boolean(item[key]) === Boolean(data)
           default:
             return true;
         }
@@ -93,6 +94,8 @@ class ReactTable extends React.Component<Props> {
       width: ${100/this.props.columns.length}%;
       padding: 10px 20px;
     `
+
+    const falsy = [false, '0', 'false', 0]
 
     return (
       <>
@@ -133,9 +136,11 @@ class ReactTable extends React.Component<Props> {
           <Head>
             <Row>
               {
-                this.state.columns.map((column: Column) => (
-                  <Col key={`title-${column.key}`}>{column.title}</Col>
-                ))
+                this.state.columns.map((column: Column) => {
+                  if (!falsy.includes(column.visible))
+                    return <Col key={`title-${column.key}`}>{column.title}</Col>
+                  return <></>
+                })
               }
             </Row>
           </Head>
@@ -146,7 +151,9 @@ class ReactTable extends React.Component<Props> {
                   <Row key={`row-${index}`}>
                     {
                       this.state.columns.map((column: Column, index) => {
-                        return <Col key={`column-${index}-index`}>{item[column.key.toString()]}</Col>
+                        if (!falsy.includes(column.visible))
+                          return <Col key={`column-${index}-index`}>{item[column.key.toString()]}</Col>
+                        return <></>
                       })
                     }
                   </Row>
