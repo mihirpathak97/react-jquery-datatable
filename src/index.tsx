@@ -46,7 +46,6 @@ const Select = styled.select`
 `
 
 const falsy = [false, '0', 'false', 0]
-const truthy = [true, '1', 'true', 1]
 
 const ReactTable: React.FunctionComponent<OwnProps> = ({
   data,
@@ -63,10 +62,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
     setColumns(columns)
   }, [])
 
-  let handleFilterChange = (filterValue: string | boolean, key: string) => {
-    setAppliedFilters(prevFilters => {
-      return {...prevFilters, [key]: filterValue}
-    })
+  React.useEffect(() => {
     setData(data.filter((item: Object) => {
       return Object.keys(appliedFilters).every(filter => {
         let filterData = filters.filter(item => item.key === filter)[0]
@@ -84,6 +80,12 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
         }
       })
     }))
+  }, [appliedFilters])
+
+  let handleFilterChange = (filterValue: string | boolean, key: string) => {
+    setAppliedFilters(prevFilters => {
+      return {...prevFilters, [key]: filterValue}
+    })
   }
 
   const Table = styled.table`
