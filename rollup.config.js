@@ -1,6 +1,6 @@
 import typescript from 'rollup-plugin-typescript'
 import commonjs from 'rollup-plugin-commonjs'
-import external from 'rollup-plugin-peer-deps-external'
+import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 // import postcss from 'rollup-plugin-postcss-modules'
 import postcss from 'rollup-plugin-postcss'
 import resolve from 'rollup-plugin-node-resolve'
@@ -25,8 +25,9 @@ export default {
       sourcemap: true
     }
   ],
+  external: ['styled-components'],
   plugins: [
-    external(),
+    peerDepsExternal(),
     postcss({
       modules: true
     }),
@@ -34,6 +35,15 @@ export default {
     svgr(),
     resolve(),
     typescript(),
-    commonjs()
+    commonjs({
+      include: 'node_modules/**',
+      namedExports: {
+        'node_modules/react-is/index.js': [
+          'isElement',
+          'isValidElementType',
+          'ForwardRef'
+        ]
+      }
+    })
   ]
 }

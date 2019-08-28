@@ -4,6 +4,8 @@
 
 import * as React from 'react'
 
+import styled from 'styled-components'
+
 interface Props {
   columns: Array<Column>,
   filters: Array<Filter>,
@@ -67,6 +69,31 @@ class ReactTable extends React.Component<Props> {
   }
 
   render() {
+
+    const Table = styled.table`
+      display: block;
+      margin: auto;
+      max-width: 90%;
+      min-width: 80%;
+    `
+
+    const Row = styled.tr`
+      width: 100%;
+    `
+
+    const Head = styled.thead`
+      width: 100%;
+    `
+
+    const Body = styled.tbody`
+      width: 100%;
+    `
+
+    const Col = styled.td`
+      width: ${100/this.props.columns.length}%;
+      padding: 10px 20px;
+    `
+
     return (
       <>
         <div className="filters">
@@ -102,32 +129,32 @@ class ReactTable extends React.Component<Props> {
             })
           }
         </div>
-        <table>
-          <thead>
-            <tr>
+        <Table>
+          <Head>
+            <Row>
               {
                 this.state.columns.map((column: Column) => (
-                  <td key={`title-${column.key}`}>{column.title}</td>
+                  <Col key={`title-${column.key}`}>{column.title}</Col>
                 ))
               }
-            </tr>
-          </thead>
-          <tbody>
+            </Row>
+          </Head>
+          <Body>
             {
               this.state.data.map((item: Object, index) => {
                 return (
-                  <tr key={`row-${index}`}>
+                  <Row key={`row-${index}`}>
                     {
                       this.state.columns.map((column: Column, index) => {
-                        return <td key={`column-${index}-index`}>{item[column.key.toString()]}</td>
+                        return <Col key={`column-${index}-index`}>{item[column.key.toString()]}</Col>
                       })
                     }
-                  </tr>
+                  </Row>
                 )
               })
             }
-          </tbody>
-        </table>
+          </Body>
+        </Table>
       </>
     )
   }
