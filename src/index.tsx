@@ -6,10 +6,17 @@ import * as React from 'react'
 
 import styled from 'styled-components'
 
-interface Props {
+interface OwnProps {
   columns: Array<Column>,
   filters: Array<Filter>,
   data: Array<Object>
+}
+
+interface OwnState {
+  data: Array<Object>,
+  filters: Array<Filter>,
+  columns: Array<Column>,
+  appliedFilters: Object
 }
 
 interface Column {
@@ -25,12 +32,35 @@ interface Filter {
   key: string
 }
 
-class ReactTable extends React.Component<Props> {
+const FilterWrapper = styled.div`
+  display: flex;
+  width: 80%;
+  height: auto;
+  margin: auto;
+  flex-direction: row;
+  justify-content: space-between;
+`
 
-  state = {
+const FilterItem = styled.div`
+  padding: 10px;
+  margin: 10px 20px;
+`
+
+const Select = styled.select`
+  padding: 10px;
+  min-width: 6rem;
+`
+
+const falsy = [false, '0', 'false', 0]
+const truthy = [true, '1', 'true', 1]
+
+class ReactTable extends React.Component<OwnProps, OwnState> {
+
+  state: Readonly<OwnState> = {
     data: [],
+    columns: [],
     filters: [],
-    columns: []
+    appliedFilters: {}
   }
 
   componentDidMount() {
@@ -41,30 +71,30 @@ class ReactTable extends React.Component<Props> {
     })
   }
 
-  handleFilterChange = (data: string | boolean, key: string, type: string) => {
-    this.setState({
-      data: this.props.data.filter((item: Object) => {
-        
-        if (type === 'toggle') {
-          if (typeof item[key.toString()] === "boolean") {
-            // 
-          }
-          else {
-            item[key] === '1' || item[key] === 'true' 
-            ? item[key] = true : item[key] = false
-          }
-        }
+  handleFilterChange = (filterValue: string | boolean, key: string) => {
+    this.setState(prevState => {
+      return {
+        appliedFilters: {...prevState.appliedFilters, [key]: filterValue}
+      }
+    }, () => {
+      this.setState({
+        data: this.props.data.filter((item: Object) => {
+          return Object.keys(this.state.appliedFilters).every(filter => {
+            let filterData = this.props.filters.filter(item => item.key === filter)[0]
+            let appliedFilter = this.state.appliedFilters[filter]
 
-        switch (type) {
-          case 'select':
-            return item[key] === data
-          case 'input':
-              return item[key].toLowerCase().includes(data.toString().toLowerCase())
-          case 'toggle':
-              return Boolean(item[key]) === Boolean(data)
-          default:
-            return true;
-        }
+            switch (filterData.type) {
+              case 'select':
+                return item[filter] === appliedFilter
+              case 'input':
+                return item[filter].toLowerCase().includes(appliedFilter.toString().toLowerCase())
+              case 'toggle':
+                return !!item[filter] === appliedFilter
+              default:
+                return true;
+            }
+          })
+        })
       })
     })
   }
@@ -95,35 +125,37 @@ class ReactTable extends React.Component<Props> {
       padding: 10px 20px;
     `
 
-    const falsy = [false, '0', 'false', 0]
-
     return (
       <>
-        <div className="filters">
+        <FilterWrapper>
           {
             this.state.filters.map((filter: Filter) => {
               if (filter.type === 'select') {
                 return (
-                  <select onChange={(event) => this.handleFilterChange(event.target.value, filter.key, 'select')}>
-                    {
-                      filter.data.map((item, index) => {
-                        return <option key={`${filter.key}-${item}-${index}`}>{item}</option>
-                      })
-                    }
-                  </select>
+                  <FilterItem key={`filter-select-${filter.key}`}>
+                    <Select onChange={(event) => this.handleFilterChange(event.target.value, filter.key)} value={this.state.appliedFilters[filter.key] || ''}>
+                      {
+                        filter.data.map((item, index) => {
+                          return <option key={`${filter.key}-${item}-${index}`}>{item}</option>
+                        })
+                      }
+                    </Select>
+                  </FilterItem>
                 )
               }
               if (filter.type === 'input') {
                 return (
-                  <input type="text" onChange={(event) => this.handleFilterChange(event.target.value, filter.key, 'input')} />
+                  <FilterItem key={`filter-input-${filter.key}`}>
+                    <input type="text" onChange={(event) => this.handleFilterChange(event.target.value, filter.key)}  value={this.state.appliedFilters[filter.key] || ''} />
+                  </FilterItem>
                 )
               }
               if (filter.type === 'toggle') {
                 return (
-                  <>
-                    <input type="checkbox" onChange={(event) => this.handleFilterChange(event.target.checked, filter.key, 'toggle')} />
+                  <FilterItem  key={`filter-toggle-${filter.key}`}>
+                    <input type="checkbox" onChange={(event) => this.handleFilterChange(event.target.checked, filter.key)}  checked={this.state.appliedFilters[filter.key] || false} />
                     <label>{filter.title}</label>
-                  </>
+                  </FilterItem>
                 )
               }
               else {
@@ -131,7 +163,7 @@ class ReactTable extends React.Component<Props> {
               }
             })
           }
-        </div>
+        </FilterWrapper>
         <Table>
           <Head>
             <Row>
