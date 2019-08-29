@@ -15,6 +15,7 @@ interface OwnProps {
 interface Column {
   title: string,
   key: string,
+  dataIndex: string,
   visible: any
 }
 
@@ -170,7 +171,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
             {
               localColumns.map((column: Column) => {
                 if (!falsy.includes(column.visible))
-                  return <Col key={`title-${column.key}`}>{column.title}</Col>
+                  return <Col key={`head-col-${column.key}`}>{column.title || column.dataIndex}</Col>
                 return <></>
               })
             }
@@ -184,7 +185,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
                   {
                     localColumns.map((column: Column, index) => {
                       if (!falsy.includes(column.visible))
-                        return <Col key={`column-${index}-index`}>{item[column.key.toString()]}</Col>
+                        return <Col key={`column-${index}-${column.key}`}>{item[column.dataIndex]}</Col>
                       return <></>
                     })
                   }
