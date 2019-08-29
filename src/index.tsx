@@ -9,7 +9,8 @@ import styled from 'styled-components'
 interface OwnProps {
   columns: Array<Column>,
   filters: Array<Filter>,
-  data: Array<Object>
+  data: Array<Object>,
+  rowKey: string
 }
 
 interface Column {
@@ -51,7 +52,8 @@ const falsy = [false, '0', 'false', 0]
 const ReactTable: React.FunctionComponent<OwnProps> = ({
   data,
   columns,
-  filters
+  filters,
+  rowKey
 }) => {
 
   const [localData, setData] = React.useState<Array<Object>>([])
@@ -95,6 +97,10 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
     setAppliedFilters(prevFilters => {
       return { ...prevFilters, [key]: filterValue }
     })
+  }
+
+  let getRowKey = (item: Object) => {
+    return rowKey ? item[rowKey] : item['key'] ? item['key'] : null
   }
 
   const Table = styled.table`
@@ -171,7 +177,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
             {
               localColumns.map((column: Column) => {
                 if (!falsy.includes(column.visible))
-                  return <Col key={`head-col-${column.key}`}>{column.title || column.dataIndex}</Col>
+                  return <Col key={`${column.key}`}>{column.title || column.dataIndex}</Col>
                 return <></>
               })
             }
@@ -181,11 +187,11 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
           {
             localData.map((item: Object, index) => {
               return (
-                <Row key={`row-${index}`}>
+                <Row key={`${getRowKey(item)}-${index}`}>
                   {
                     localColumns.map((column: Column, index) => {
                       if (!falsy.includes(column.visible))
-                        return <Col key={`column-${index}-${column.key}`}>{item[column.dataIndex]}</Col>
+                        return <Col key={`${column.key}-${index}`}>{item[column.dataIndex]}</Col>
                       return <></>
                     })
                   }
