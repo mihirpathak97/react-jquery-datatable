@@ -8,16 +8,18 @@ import styled from 'styled-components'
 
 interface OwnProps {
   columns: Array<Column>,
-  filters: Array<Filter>,
+  filters?: Array<Filter>,
   data: Array<Object>,
-  rowKey: string
+  rowKey?: string,
+  loading?: boolean
 }
 
 interface Column {
   title: string,
   key: string,
   dataIndex: string,
-  visible: any
+  visible: any,
+  render: Function
 }
 
 interface Filter {
@@ -53,7 +55,8 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   data,
   columns,
   filters,
-  rowKey
+  rowKey,
+  loading
 }) => {
 
   const [localData, setData] = React.useState<Array<Object>>([])
@@ -68,7 +71,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   React.useEffect(() => {
     setData(data.filter((item: Object) => {
       return Object.keys(appliedFilters).every(filter => {
-        let filterData = filters.filter(item => item.key === filter)[0]
+        let filterData = getFilters().filter(item => item.key === filter)[0]
         let appliedFilter = appliedFilters[filter]
 
         if (!filterData) {
@@ -99,6 +102,8 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
     })
   }
 
+  let getFilters = () => filters ? filters : []
+
   let getRowKey = (item: Object) => {
     return rowKey ? item[rowKey] : item['key'] ? item['key'] : null
   }
@@ -127,11 +132,19 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
     padding: 10px 20px;
   `
 
+  if (loading) {
+    return (
+      <>
+        Loading please wait...
+      </>
+    )
+  }
+
   return (
     <>
       <FilterWrapper>
         {
-          filters.map((filter: Filter) => {
+          getFilters().map((filter: Filter) => {
             if (filter.type === 'select') {
               return (
                 <FilterItem key={`filter-select-${filter.key}`}>
@@ -191,7 +204,9 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
                   {
                     localColumns.map((column: Column, index) => {
                       if (!falsy.includes(column.visible))
-                        return <Col key={`${column.key}-${index}`}>{item[column.dataIndex]}</Col>
+                        return <Col key={`${column.key}-${index}`}>{
+                          column.render ? column.render(item[column.dataIndex], item) : item[column.dataIndex]
+                        }</Col>
                       return <></>
                     })
                   }
