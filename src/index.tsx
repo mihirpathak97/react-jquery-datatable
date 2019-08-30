@@ -150,6 +150,10 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
     setAppliedFilters({})
   }
 
+  let parseData = (data: any) => {
+    return typeof data === 'boolean' ? data === true ? 'True' : 'False' :  data.toString()
+  }
+
   const Table = styled.table`
     display: block;
     margin: auto;
@@ -255,7 +259,8 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
                     localColumns.map((column: Column, index) => {
                       if (!falsy.includes(column.visible))
                         return <Col key={`${column.key}-${index}`}>{
-                          typeof column.render === 'function' ? column.render(item[column.dataIndex], item) : item[column.dataIndex]
+                          typeof column.render === 'function' ? column.render(item[column.dataIndex], item)
+                          : parseData(item[column.dataIndex])
                         }</Col>
                       return <></>
                     })
