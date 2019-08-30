@@ -2,49 +2,57 @@ import React, { Component } from 'react'
 
 import ReactTable from 'react-table'
 
-export default class App extends Component {
-  render () {
+import axios from 'axios'
 
-    const data = [
-      {
-        name: 'Mihir',
-        email: 'mihirpathak97',
-        shouldShow: '1'
-      },
-      {
-        name: 'Bleh',
-        email: 'mihirpathak',
-        shouldShow: '0'
-      }
-    ]
+export default class App extends Component {
+
+  state = {
+    data: [],
+    loading: true
+  }
+
+  componentDidMount() {
+    axios.get('https://jsonplaceholder.typicode.com/photos')
+      .then(response => {
+        this.setState({
+          data: response.data,
+          loading: false
+        })
+      })
+  }
+
+  render () {
 
     const columns = [
       {
-        key: 'name',
-        title: 'Name'
+        dataIndex: 'id',
+        key: 'id',
+        title: 'ID'
       },
       {
-        key: 'email',
-        title: 'E-mail'
+        dataIndex: 'title',
+        key: 'title',
+        title: 'Title'
       },
       {
-        key: 'shouldShow',
-        title: 'Should Show'
+        dataIndex: 'url',
+        key: 'url',
+        title: 'URL',
+        render: (text) => <a href={text}>{text}</a>
       },
-    ]
-
-    const filters = [
       {
-        type: 'select',
-        title: 'Should Show?',
-        data: ['Mihir', 'Bleh'],
-        key: 'name'
+        dataIndex: 'thumbnailUrl',
+        key: 'thumbnailUrl',
+        title: 'Thumbnail',
+        render: (text, record) => {
+          return <img src={text} alt={record.title}></img>
+        }
       }
     ]
 
     return (
       <div>
-        <ReactTable columns={columns} data={data} filters={filters} />
+        <ReactTable columns={columns} loading={this.state.loading} data={this.state.data} />
       </div>
     )
   }
