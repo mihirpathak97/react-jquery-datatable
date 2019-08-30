@@ -4,12 +4,24 @@
 
 import * as React from 'react'
 import styled from 'styled-components'
+
+/**
+ * The component's props
+ * @typedef OwnProps
+ * @property {array} data - Specifies the data to populate the table with
+ * @property {array} columns - Specifies the columns to display
+ * @property {array=} filters - Optional prop to specify filtets
+ * @property {string=} rowKey - Specifies the unique key for each row. Appended with `index`
+ * @property {boolean=} loading - Specifies if the table is in loading state. Will show a generic loading UI
+ * @property {boolean=} showClearFilters Optional prop to show the `clear filters` button. Defaults to true
+ */
 interface OwnProps {
+  data: Array<Object>,
   columns: Array<Column>,
   filters?: Array<Filter>,
-  data: Array<Object>,
   rowKey?: string,
-  loading?: boolean
+  loading?: boolean,
+  showClearFilters?: boolean
 }
 
 /**
@@ -81,7 +93,8 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   columns,
   filters,
   rowKey,
-  loading
+  loading,
+  showClearFilters = true
 }) => {
 
   const [localData, setData] = React.useState<Array<Object>>([])
@@ -131,6 +144,10 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
 
   let getRowKey = (item: Object) => {
     return rowKey ? item[rowKey] : item['key'] ? item['key'] : null
+  }
+
+  let clearFilters = () => {
+    setAppliedFilters({})
   }
 
   const Table = styled.table`
@@ -209,6 +226,13 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
           <label>Global Search</label>{' '}
           <input type="text" onChange={(event) => handleFilterChange(event.target.value, 'globalSearch')} value={appliedFilters['globalSearch'] || ''} />
         </FilterItem>
+        {
+          showClearFilters ? (
+            <FilterItem key={`filter-clear`}>
+              <button onClick={clearFilters}>Clear Filters</button>
+            </FilterItem>
+          ) : null
+        }
       </FilterWrapper>
       <Table>
         <Head>
