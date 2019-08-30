@@ -231,7 +231,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
                     localColumns.map((column: Column, index) => {
                       if (!falsy.includes(column.visible))
                         return <Col key={`${column.key}-${index}`}>{
-                          column.render ? column.render(item[column.dataIndex], item) : item[column.dataIndex]
+                          typeof column.render === 'function' ? column.render(item[column.dataIndex], item) : item[column.dataIndex]
                         }</Col>
                       return <></>
                     })
