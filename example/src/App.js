@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import ReactTable from 'react-table'
+import ReactTable from '@carbondojo/react-table'
 
 import axios from 'axios'
 
