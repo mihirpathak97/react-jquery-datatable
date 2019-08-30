@@ -118,16 +118,16 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
           }
         }
 
-        switch (filterData.type) {
+        switch (String(filterData.type)) {
           case 'select':
-            return item[filter] === appliedFilter
+            return String(item[filter]) === String(appliedFilter)
           case 'input':
-            return item[filter].toLowerCase().includes(appliedFilter.toString().toLowerCase())
+            return String(item[filter]).toLowerCase().includes(String(appliedFilter).toLowerCase())
           case 'toggle':
-            return !!item[filter] === appliedFilter
+            return !!item[filter] === Boolean(appliedFilter)
           default:
             return Object.keys(item).some((key) => {
-              return item[key].toLowerCase().includes(appliedFilter.toLowerCase());
+              return String(item[key]).toLowerCase().includes(String(appliedFilter.toLowerCase()));
             });
         }
       })
@@ -151,7 +151,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   }
 
   let parseData = (data: any) => {
-    return typeof data === 'boolean' ? data === true ? 'True' : 'False' :  data.toString()
+    return typeof data === 'boolean' ? data === true ? 'True' : 'False' :  String(data)
   }
 
   const Table = styled.table`
