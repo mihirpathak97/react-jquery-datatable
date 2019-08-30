@@ -108,18 +108,14 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   pagination = {
     currentPage: 1,
     pageLength: 25,
-    onChange: () => {}
+    onChange: () => { }
   }
 }) => {
 
-  const [localData, setData] = React.useState<Array<Object>>([])
-  const [localColumns, setColumns] = React.useState<Array<Column>>([])
+  const [localData, setData] = React.useState<Array<Object>>(data || [])
+  const [localColumns, setColumns] = React.useState<Array<Column>>(columns || [])
   const [appliedFilters, setAppliedFilters] = React.useState<Object>({})
-
-  React.useEffect(() => {
-    setData(data)
-    setColumns(columns)
-  }, [])
+  const [pageData, setPageData] = React.useState<Pagination>(pagination)
 
   React.useEffect(() => {
     setData(data.filter((item: Object) => {
@@ -166,7 +162,22 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   }
 
   let parseData = (data: any) => {
-    return typeof data === 'boolean' ? data === true ? 'True' : 'False' :  String(data)
+    return typeof data === 'boolean' ? data === true ? 'True' : 'False' : String(data)
+  }
+
+  let getPaginatedData = () => {
+    return localData.slice((pagination.currentPage - 1) * pagination.pageLength, pagination.pageLength * pagination.currentPage)
+  }
+
+  let setPageNumber = (page: number) => {
+    setPageData({
+      ...pageData,
+      currentPage: page
+    })
+    pagination.onChange(localData, {
+      ...pageData,
+      currentPage: page
+    })
   }
 
   const Table = styled.table`
@@ -267,7 +278,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
         </Head>
         <Body>
           {
-            localData.map((item: Object, index) => {
+            getPaginatedData().map((item: Object, index) => {
               return (
                 <Row key={`${getRowKey(item)}-${index}`}>
                   {
@@ -275,7 +286,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
                       if (column.visible !== false)
                         return <Col key={`${column.key}-${index}`}>{
                           typeof column.render === 'function' ? column.render(item[column.dataIndex], item)
-                          : parseData(item[column.dataIndex])
+                            : parseData(item[column.dataIndex])
                         }</Col>
                       return <></>
                     })
@@ -288,7 +299,15 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
       </Table>
       {
         localData.length > pagination.pageLength ? (
-          <Pagination>Under Construction</Pagination> 
+          <Pagination>
+            <p>
+              {
+                Array.from(Array(data.length / pagination.pageLength).keys()).map((pageNumber: number) => {
+                  return <span onClick={() => { setPageNumber(pageNumber) }}>{` ${pageNumber} `}</span>
+                })
+              }
+            </p>
+          </Pagination>
         ) : null
       }
     </>
