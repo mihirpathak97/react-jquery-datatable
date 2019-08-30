@@ -21,7 +21,8 @@ interface OwnProps {
   filters?: Array<Filter>,
   rowKey?: string,
   loading?: boolean,
-  showClearFilters?: boolean
+  showClearFilters?: boolean,
+  pagination?: Pagination
 }
 
 /**
@@ -67,6 +68,12 @@ interface FilterType {
   type: string
 }
 
+interface Pagination {
+  currentPage: number,
+  pageLength: number,
+  onChange: Function
+}
+
 const FilterWrapper = styled.div`
   display: flex;
   width: 80%;
@@ -86,6 +93,11 @@ const Select = styled.select`
   min-width: 6rem;
 `
 
+const Pagination = styled.div`
+  position: relative;
+  right: 0;
+`
+
 const falsy = [false, '0', 'false', 0]
 
 const ReactTable: React.FunctionComponent<OwnProps> = ({
@@ -94,7 +106,12 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   filters,
   rowKey,
   loading,
-  showClearFilters = true
+  showClearFilters = true,
+  pagination = {
+    currentPage: 1,
+    pageLength: 25,
+    onChange: () => {}
+  }
 }) => {
 
   const [localData, setData] = React.useState<Array<Object>>([])
@@ -271,6 +288,11 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
           }
         </Body>
       </Table>
+      {
+        localData.length > pagination.pageLength ? (
+          <Pagination>Under Construction</Pagination> 
+        ) : null
+      }
     </>
   )
 }
