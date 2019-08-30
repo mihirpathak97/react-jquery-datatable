@@ -796,6 +796,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@carbondojo/react-table@link:..":
+  version "0.0.0"
+  uid ""
+
 "@cnakazawa/watch@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@cnakazawa/watch/-/watch-1.0.3.tgz#099139eaec7ebf07a27c1786a3ff64f39464d2ef"
@@ -7909,10 +7913,6 @@ react-is@^16.8.1, react-is@^16.8.4:
   version "16.9.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.9.0.tgz#21ca9561399aad0ff1a7701c01683e8ca981edcb"
   integrity sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==
-
-"react-table@link:..":
-  version "0.0.0"
-  uid ""
 
 react@^16.9.0:
   version "16.9.0"
