@@ -170,18 +170,14 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
     return typeof data === 'boolean' ? data === true ? 'True' : 'False' : String(data)
   }
 
-  let getPaginatedData = () => {
-    return localData.slice((pagination.currentPage - 1) * pagination.pageLength, pagination.pageLength * pagination.currentPage)
-  }
+  let paginatedData: Array<Object> = localData.slice((pageData.currentPage - 1) * pageData.pageLength, pageData.pageLength * pageData.currentPage)
 
   let setPageNumber = (page: number) => {
-    setPageData({
-      ...pageData,
-      currentPage: page
-    })
-    pagination.onChange(localData, {
-      ...pageData,
-      currentPage: page
+    setPageData(oldPageData => {
+      return {
+        ...oldPageData,
+        currentPage: page
+      }
     })
   }
 
@@ -283,7 +279,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
         </Head>
         <Body>
           {
-            getPaginatedData().map((item: Object, index) => {
+            paginatedData.map((item: Object, index) => {
               return (
                 <Row key={`${getRowKey(item)}-${index}`}>
                   {
@@ -307,7 +303,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
           <Pagination>
             <p>
               {
-                Array.from(Array(data.length / pagination.pageLength).keys()).map((pageNumber: number) => {
+                Array.from(Array(Math.floor(data.length / pagination.pageLength)).keys()).map((pageNumber: number) => {
                   return <span onClick={() => { setPageNumber(pageNumber) }}>{` ${pageNumber} `}</span>
                 })
               }
