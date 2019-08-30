@@ -4,6 +4,10 @@
 
 [![NPM](https://img.shields.io/npm/v/@carbondojo/react-table.svg)](https://www.npmjs.com/package/@carbondojo/react-table)
 [![Dependencies](https://img.shields.io/david/mihirpathak97/react-table)](http://david-dm.org/mihirpathak97/react-table)
+[![Style: styled-components](https://img.shields.io/badge/style-%F0%9F%92%85%20styled--components-orange.svg?colorB=daa357&colorA=db748e)](https://github.com/styled-components/styled-components)
+![npm bundle size (scoped)](https://img.shields.io/bundlephobia/min/@carbondojo/react-table)
+![GitHub](https://img.shields.io/github/license/mihirpathak97/react-table)
+
 ## Install
 
 ```bash
