@@ -1,11 +1,9 @@
 /**
- * @Component ReactTable
+ * @FunctionComponent ReactTable
  */
 
 import * as React from 'react'
-
 import styled from 'styled-components'
-
 interface OwnProps {
   columns: Array<Column>,
   filters?: Array<Filter>,
@@ -14,20 +12,47 @@ interface OwnProps {
   loading?: boolean
 }
 
+/**
+ * A column
+ * @typedef Column
+ * @property {string} title - Specifies column title
+ * @property {string} key - A unique key that will be used as `key` in React
+ * @property {string} dataIndex - The key to find in data passed
+ * @property {*} visible - Specifies if column is visible. Accepts falsy values
+ * @property {func} render - A custom render function for column
+ */
 interface Column {
   title: string,
   key: string,
   dataIndex: string,
-  visible: any,
-  render: Function
+  visible?: any,
+  render?: Function
 }
 
+/**
+ * A filter
+ * @typedef Filter
+ * @property {string=} label - Specifies filter label
+ * @property {string=} data - Array to specifiy data for `select`
+ * @property {string} type - Type of filter. One of [select, input, toggle]
+ * @property {string} dataIndex - Specifies which key to filter
+ * @property {string=} placeholder - Input placeholder
+ */
 interface Filter {
-  label: string,
-  data: Array<any>,
+  label?: string,
+  data?: Array<any>,
   type: string,
-  key: string,
-  placeholder: string
+  dataIndex: string,
+  placeholder?: string
+}
+
+/**
+ * Same like filter, but will hold only type
+ * @typedef FilterType
+ * @property {string} type - Type of filter. One of [select, input, toggle]
+ */
+interface FilterType {
+  type: string
 }
 
 const FilterWrapper = styled.div`
@@ -71,7 +96,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   React.useEffect(() => {
     setData(data.filter((item: Object) => {
       return Object.keys(appliedFilters).every(filter => {
-        let filterData = getFilters().filter(item => item.key === filter)[0]
+        let filterData: FilterType = getFilters().filter(item => item.dataIndex === filter)[0]
         let appliedFilter = appliedFilters[filter]
 
         if (!filterData) {
@@ -147,12 +172,13 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
           getFilters().map((filter: Filter) => {
             if (filter.type === 'select') {
               return (
-                <FilterItem key={`filter-select-${filter.key}`}>
-                  <Select onChange={(event) => handleFilterChange(event.target.value, filter.key)} value={appliedFilters[filter.key] || ''}>
+                <FilterItem key={`filter-select-${filter.dataIndex}`}>
+                  <Select onChange={(event) => handleFilterChange(event.target.value, filter.dataIndex)} value={appliedFilters[filter.dataIndex] || ''}>
+                    <option value="" disabled>{filter.placeholder ? filter.placeholder : 'Select and option'}</option>
                     {
-                      filter.data.map((item, index) => {
-                        return <option key={`${filter.key}-${item}-${index}`}>{item}</option>
-                      })
+                      filter.data ? filter.data.map((item, index) => {
+                        return <option key={`${filter.dataIndex}-${item}-${index}`}>{item}</option>
+                      }) : null
                     }
                   </Select>
                 </FilterItem>
