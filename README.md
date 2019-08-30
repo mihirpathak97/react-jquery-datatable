@@ -14,6 +14,11 @@
 npm install --save @carbondojo/react-table
 ```
 
+## Feature
+  - Very tiny footprint - ~5KB minified
+  - Zero dependencies 👌🏻
+  - Incredibly fast - filter large data sets with ease
+
 ## Usage
 
 ```tsx
@@ -24,11 +29,15 @@ import ReactTable from '@carbondojo/react-table'
 class Example extends React.Component {
   render () {
     return (
-      <ReactTable />
+      <ReactTable data={data} columns={columns} filters={filters}  />
     )
   }
 }
 ```
+
+### API
+
+TODO
 
 ## License
 
