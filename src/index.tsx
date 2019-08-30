@@ -186,16 +186,16 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
             }
             if (filter.type === 'input') {
               return (
-                <FilterItem key={`filter-input-${filter.key}`}>
+                <FilterItem key={`filter-input-${filter.dataIndex}`}>
                   <label>{filter.label}</label>{' '}
-                  <input type="text" onChange={(event) => handleFilterChange(event.target.value, filter.key)} value={appliedFilters[filter.key] || ''} />
+                  <input type="text" onChange={(event) => handleFilterChange(event.target.value, filter.dataIndex)} value={appliedFilters[filter.dataIndex] || ''} />
                 </FilterItem>
               )
             }
             if (filter.type === 'toggle') {
               return (
-                <FilterItem key={`filter-toggle-${filter.key}`}>
-                  <input type="checkbox" onChange={(event) => handleFilterChange(event.target.checked, filter.key)} checked={appliedFilters[filter.key] || false} />
+                <FilterItem key={`filter-toggle-${filter.dataIndex}`}>
+                  <input type="checkbox" onChange={(event) => handleFilterChange(event.target.checked, filter.dataIndex)} checked={appliedFilters[filter.dataIndex] || false} />
                   <label>{filter.label}</label>
                 </FilterItem>
               )
