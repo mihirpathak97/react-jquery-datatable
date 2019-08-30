@@ -31,14 +31,14 @@ interface OwnProps {
  * @property {string} title - Specifies column title
  * @property {string} key - A unique key that will be used as `key` in React
  * @property {string} dataIndex - The key to find in data passed
- * @property {*} visible - Specifies if column is visible. Accepts falsy values
+ * @property {boolean} visible - Specifies if column is visible. Accepts falsy values
  * @property {func} render - A custom render function for column
  */
 interface Column {
   title: string,
   key: string,
   dataIndex: string,
-  visible?: any,
+  visible?: boolean,
   render?: Function
 }
 
@@ -97,8 +97,6 @@ const Pagination = styled.div`
   position: relative;
   right: 0;
 `
-
-const falsy = [false, '0', 'false', 0]
 
 const ReactTable: React.FunctionComponent<OwnProps> = ({
   data,
@@ -260,7 +258,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
           <Row>
             {
               localColumns.map((column: Column) => {
-                if (!falsy.includes(column.visible))
+                if (column.visible !== false)
                   return <Col key={`${column.key}`}>{column.title || column.dataIndex}</Col>
                 return <></>
               })
@@ -274,7 +272,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
                 <Row key={`${getRowKey(item)}-${index}`}>
                   {
                     localColumns.map((column: Column, index) => {
-                      if (!falsy.includes(column.visible))
+                      if (column.visible !== false)
                         return <Col key={`${column.key}-${index}`}>{
                           typeof column.render === 'function' ? column.render(item[column.dataIndex], item)
                           : parseData(item[column.dataIndex])
