@@ -112,10 +112,15 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   }
 }) => {
 
-  const [localData, setData] = React.useState<Array<Object>>(data || [])
-  const [localColumns, setColumns] = React.useState<Array<Column>>(columns || [])
+  const [localData, setData] = React.useState<Array<Object>>([])
+  const [localColumns, setColumns] = React.useState<Array<Column>>([])
   const [appliedFilters, setAppliedFilters] = React.useState<Object>({})
   const [pageData, setPageData] = React.useState<Pagination>(pagination)
+
+  React.useEffect(() => {
+    setData(data)
+    setColumns(columns)
+  }, [data, columns])
 
   React.useEffect(() => {
     setData(data.filter((item: Object) => {
