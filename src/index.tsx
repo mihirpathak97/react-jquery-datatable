@@ -21,6 +21,7 @@ interface OwnProps {
   filters?: Array<Filter>,
   rowKey?: string,
   loading?: boolean,
+  showGlobalSearch?: boolean,
   showClearFilters?: boolean,
   pagination?: Pagination
 }
@@ -104,6 +105,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   filters,
   rowKey,
   loading,
+  showGlobalSearch = false,
   showClearFilters = true,
   pagination = {
     currentPage: 1,
@@ -143,6 +145,8 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
             return !!item[filter] === Boolean(appliedFilter)
           default:
             return Object.keys(item).some((key) => {
+              // TODO - Currently global search also filters invisible columns
+              // might have to rewrite the filter logic to accomodate this use case
               return String(item[key]).toLowerCase().includes(String(appliedFilter.toLowerCase()));
             });
         }
@@ -253,12 +257,16 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
             }
           })
         }
-        <FilterItem key={`filter-input-global`}>
-          <label>Global Search</label>{' '}
-          <input type="text" onChange={(event) => handleFilterChange(event.target.value, 'globalSearch')} value={appliedFilters['globalSearch'] || ''} />
-        </FilterItem>
         {
-          showClearFilters ? (
+          showGlobalSearch ? (
+            <FilterItem key={`filter-input-global`}>
+              <label>Global Search</label>{' '}
+              <input type="text" onChange={(event) => handleFilterChange(event.target.value, 'globalSearch')} value={appliedFilters['globalSearch'] || ''} />
+            </FilterItem>
+          ) : null
+        }
+        {
+          showClearFilters && (filters || showGlobalSearch) ? (
             <FilterItem key={`filter-clear`}>
               <button onClick={clearFilters}>Clear Filters</button>
             </FilterItem>
