@@ -58,7 +58,8 @@ interface Filter {
   data?: Array<any>,
   type: string,
   dataIndex: string,
-  placeholder?: string
+  placeholder?: string,
+  onFilterChange?: Function
 }
 
 /**
@@ -118,6 +119,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   const [renderData, setData] = React.useState<Array<Object>>([])
   const [localColumns, setColumns] = React.useState<Array<Column>>([])
   const [appliedFilters, setAppliedFilters] = React.useState<Object>({})
+  const [filterValues, setFilterValues] = React.useState<Object>({})
   const [pageData, setPageData] = React.useState<Pagination>(pagination)
 
   React.useEffect(() => {
@@ -156,6 +158,18 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   }, [appliedFilters])
 
   let handleFilterChange = (filterValue: string | boolean, key: string) => {
+    let filterData: Filter = getFilters().filter(item => item.dataIndex === key)[0]
+    setFilterValues(prevFilters => {
+      return { ...prevFilters, [key]: filterValue }
+    })
+
+    /**
+     * If there is a handler for filter provided,
+     * this will trigger that function, otherwise
+     * we will go ahead with the default filter logic
+     */
+    filterData.onFilterChange
+    ? filterData.onFilterChange(filterValue, key, {...filterValues, [key]: filterValue}) :
     setAppliedFilters(prevFilters => {
       return { ...prevFilters, [key]: filterValue }
     })
@@ -167,7 +181,6 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
    */
   let getFilters = () => filters || []
 
-
   /**
    * Returns the row key prop if available or will try to find 
    * a `key` in item. Returns null otherwise
@@ -177,6 +190,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
 
   let clearFilters = () => {
     setAppliedFilters({})
+    setFilterValues({})
   }
 
   /**
@@ -249,7 +263,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
             if (filter.type === 'select') {
               return (
                 <FilterItem key={`filter-select-${filter.dataIndex}`}>
-                  <Select onChange={(event) => handleFilterChange(event.target.value, filter.dataIndex)} value={appliedFilters[filter.dataIndex] || ''}>
+                  <Select onChange={(event) => handleFilterChange(event.target.value, filter.dataIndex)} value={filterValues[filter.dataIndex] || ''}>
                     <option value="" disabled>{filter.placeholder ? filter.placeholder : 'Select and option'}</option>
                     {
                       filter.data ? filter.data.map((item, index) => {
@@ -264,14 +278,14 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
               return (
                 <FilterItem key={`filter-input-${filter.dataIndex}`}>
                   <label>{filter.label}</label>{' '}
-                  <input type="text" onChange={(event) => handleFilterChange(event.target.value, filter.dataIndex)} value={appliedFilters[filter.dataIndex] || ''} />
+                  <input type="text" onChange={(event) => handleFilterChange(event.target.value, filter.dataIndex)} value={filterValues[filter.dataIndex] || ''} />
                 </FilterItem>
               )
             }
             if (filter.type === 'toggle') {
               return (
                 <FilterItem key={`filter-toggle-${filter.dataIndex}`}>
-                  <input type="checkbox" onChange={(event) => handleFilterChange(event.target.checked, filter.dataIndex)} checked={appliedFilters[filter.dataIndex] || false} />
+                  <input type="checkbox" onChange={(event) => handleFilterChange(event.target.checked, filter.dataIndex)} checked={filterValues[filter.dataIndex] || false} />
                   <label>{filter.label}</label>
                 </FilterItem>
               )
@@ -285,7 +299,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
           showGlobalSearch ? (
             <FilterItem key={`filter-input-global`}>
               <label>Global Search</label>{' '}
-              <input type="text" onChange={(event) => handleFilterChange(event.target.value, 'globalSearch')} value={appliedFilters['globalSearch'] || ''} />
+              <input type="text" onChange={(event) => handleFilterChange(event.target.value, 'globalSearch')} value={filterValues['globalSearch'] || ''} />
             </FilterItem>
           ) : null
         }
