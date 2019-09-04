@@ -10,10 +10,11 @@ import styled from 'styled-components'
  * @typedef OwnProps
  * @property {array} data - Specifies the data to populate the table with
  * @property {array} columns - Specifies the columns to display
- * @property {array=} filters - Optional prop to specify filtets
- * @property {string=} rowKey - Specifies the unique key for each row. Appended with `index`
- * @property {boolean=} loading - Specifies if the table is in loading state. Will show a generic loading UI
- * @property {boolean=} showClearFilters Optional prop to show the `clear filters` button. Defaults to true
+ * @property {array} filters - Optional prop to specify filtets
+ * @property {string} rowKey - Specifies the unique key for each row. Appended with `index`
+ * @property {boolean} loading - Specifies if the table is in loading state. Will show a generic loading UI
+ * @property {boolean} showClearFilters - Optional prop to show the `clear filters` button. Defaults to true
+ * @property {Pagination} pagination - Optional prop to pass pagination config
  */
 interface OwnProps {
   data: Array<Object>,
@@ -46,11 +47,11 @@ interface Column {
 /**
  * A filter
  * @typedef Filter
- * @property {string=} label - Specifies filter label
- * @property {string=} data - Array to specifiy data for `select`
+ * @property {string} label - Specifies filter label
+ * @property {string} data - Array to specifiy data for `select`
  * @property {string} type - Type of filter. One of [select, input, toggle]
  * @property {string} dataIndex - Specifies which key to filter
- * @property {string=} placeholder - Input placeholder
+ * @property {string} placeholder - Input placeholder
  */
 interface Filter {
   label?: string,
@@ -160,20 +161,45 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
     })
   }
 
+  /**
+   * Returns the filters prop passed by the parent or an empty
+   * array if unavailable.
+   */
   let getFilters = () => filters || []
 
+
+  /**
+   * Returns the row key prop if available or will try to find 
+   * a `key` in item. Returns null otherwise
+   * @param {Object} item 
+   */
   let getRowKey = (item: Object) => rowKey ? item[rowKey] : item['key'] ? item['key'] : null
 
   let clearFilters = () => {
     setAppliedFilters({})
   }
 
+  /**
+   * Parses the data by forcefully typecasting them as String.
+   * @param data - The data to parse
+   */
   let parseData = (data: any) => {
     return typeof data === 'boolean' ? data === true ? 'True' : 'False' : String(data)
   }
 
+
+  /**
+   * This will contain the visible set of data depending on the pagination config
+   * @type {Array<Object>}
+   */
   let paginatedData: Array<Object> = renderData.slice((pageData.currentPage - 1) * pageData.pageLength, pageData.pageLength * pageData.currentPage)
 
+  /**
+   * Set the current page number.
+   * This will trigger the `paginatedData` variable to be updated
+   * and cause a re-render.
+   * @param {number} page
+   */
   let setPageNumber = (page: number) => {
     setPageData(oldPageData => {
       return {
