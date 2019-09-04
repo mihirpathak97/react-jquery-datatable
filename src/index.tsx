@@ -114,7 +114,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   }
 }) => {
 
-  const [localData, setData] = React.useState<Array<Object>>([])
+  const [renderData, setData] = React.useState<Array<Object>>([])
   const [localColumns, setColumns] = React.useState<Array<Column>>([])
   const [appliedFilters, setAppliedFilters] = React.useState<Object>({})
   const [pageData, setPageData] = React.useState<Pagination>(pagination)
@@ -160,11 +160,9 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
     })
   }
 
-  let getFilters = () => filters ? filters : []
+  let getFilters = () => filters || []
 
-  let getRowKey = (item: Object) => {
-    return rowKey ? item[rowKey] : item['key'] ? item['key'] : null
-  }
+  let getRowKey = (item: Object) => rowKey ? item[rowKey] : item['key'] ? item['key'] : null
 
   let clearFilters = () => {
     setAppliedFilters({})
@@ -174,7 +172,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
     return typeof data === 'boolean' ? data === true ? 'True' : 'False' : String(data)
   }
 
-  let paginatedData: Array<Object> = localData.slice((pageData.currentPage - 1) * pageData.pageLength, pageData.pageLength * pageData.currentPage)
+  let paginatedData: Array<Object> = renderData.slice((pageData.currentPage - 1) * pageData.pageLength, pageData.pageLength * pageData.currentPage)
 
   let setPageNumber = (page: number) => {
     setPageData(oldPageData => {
@@ -307,7 +305,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
         </Body>
       </Table>
       {
-        localData.length > pagination.pageLength ? (
+        renderData.length > pagination.pageLength ? (
           <Pagination>
             <p>
               {
