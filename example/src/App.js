@@ -38,6 +38,7 @@ export default class App extends Component {
         dataIndex: 'url',
         key: 'url',
         title: 'URL',
+        visible: false,
         render: (text) => <a href={text}>{text}</a>
       },
       {
@@ -47,12 +48,35 @@ export default class App extends Component {
         render: (text, record) => {
           return <img src={text} alt={record.title}></img>
         }
+      },
+      {
+        key: 'action',
+        title: 'Actions',
+        render: (text, record) => {
+          return <button onClick={() => alert(JSON.stringify(record))}>View</button>
+        }
+      }
+    ]
+
+    const filters = [
+      {
+        dataIndex: 'title',
+        type: 'input'
+      },
+      {
+        dataIndex: 'url',
+        type: 'input',
+        onFilterChange: (value, dataIndex, allFilters) => {
+          console.log(value)
+          console.log(dataIndex)
+          console.log(allFilters)
+        }
       }
     ]
 
     return (
       <div>
-        <ReactTable columns={columns} loading={this.state.loading} data={this.state.data} />
+        <ReactTable columns={columns} filters={filters} loading={this.state.loading} data={this.state.data} />
       </div>
     )
   }
