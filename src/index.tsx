@@ -4,6 +4,7 @@
 
 import * as React from 'react'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
 
 /**
  * The component's props
@@ -52,6 +53,7 @@ interface Column {
  * @property {string} type - Type of filter. One of [select, input, toggle]
  * @property {string} dataIndex - Specifies which key to filter
  * @property {string} placeholder - Input placeholder
+ * @property {Function} onFilterChange - An optional callback that will be triggered when filter value changes
  */
 interface Filter {
   label?: string,
@@ -169,10 +171,10 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
      * we will go ahead with the default filter logic
      */
     filterData.onFilterChange
-    ? filterData.onFilterChange(filterValue, key, {...filterValues, [key]: filterValue}) :
-    setAppliedFilters(prevFilters => {
-      return { ...prevFilters, [key]: filterValue }
-    })
+      ? filterData.onFilterChange(filterValue, key, { ...filterValues, [key]: filterValue }) :
+      setAppliedFilters(prevFilters => {
+        return { ...prevFilters, [key]: filterValue }
+      })
   }
 
   /**
@@ -184,7 +186,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   /**
    * Returns the row key prop if available or will try to find 
    * a `key` in item. Returns null otherwise
-   * @param {Object} item 
+   * @param {Object} item
    */
   let getRowKey = (item: Object) => rowKey ? item[rowKey] : item['key'] ? item['key'] : null
 
@@ -359,6 +361,17 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
       }
     </>
   )
+}
+
+ReactTable.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  columns: PropTypes.arrayOf(PropTypes.object).isRequired,
+  filters: PropTypes.arrayOf(PropTypes.object),
+  rowKey: PropTypes.string,
+  loading: PropTypes.bool,
+  showGlobalSearch: PropTypes.bool,
+  showClearFilters: PropTypes.bool,
+  pagination: PropTypes.object
 }
 
 export default ReactTable
