@@ -111,7 +111,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
   showClearFilters = true,
   pagination = {
     currentPage: 1,
-    pageLength: 25,
+    pageLength: 50,
     onChange: () => { }
   }
 }) => {
