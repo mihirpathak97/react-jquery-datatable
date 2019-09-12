@@ -351,7 +351,7 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
           <Pagination>
             <p>
               {
-                Array.from(Array(Math.floor(data.length / pagination.pageLength)).keys()).map((pageNumber: number) => {
+                Array.from(Array(Math.floor(renderData.length / pagination.pageLength)).keys()).map((pageNumber: number) => {
                   return <span key={`page-${pageNumber}`} onClick={() => { setPageNumber(pageNumber + 1) }}>{` ${pageNumber + 1} `}</span>
                 })
               }
