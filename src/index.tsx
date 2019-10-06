@@ -61,7 +61,8 @@ interface Filter {
   type: string,
   dataIndex: string,
   placeholder?: string,
-  onFilterChange?: Function
+  onFilterChange?: Function,
+  render?: Function
 }
 
 /**
@@ -285,6 +286,8 @@ const ReactTable: React.FunctionComponent<OwnProps> = ({
               )
             }
             if (filter.type === 'toggle') {
+              typeof filter.render === 'function' ? filter.render(item[column.dataIndex], item)
+                            : parseData(item[column.dataIndex])
               return (
                 <FilterItem key={`filter-toggle-${filter.dataIndex}`}>
                   <input type="checkbox" onChange={(event) => handleFilterChange(event.target.checked, filter.dataIndex)} checked={filterValues[filter.dataIndex] || false} />
